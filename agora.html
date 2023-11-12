@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Agora</title>
+      <link rel = "stylesheet" href = "http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+      <script src = "http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+   </head>
+
+   <body>
+    <div class="container">
+        <h1>Agora - Mapping as a Preventive Measure for People with Phobias</h1>
+        <div id = "map" style = "width: 580px; height: 580px"></div>
+        <form id="myForm">
+
+            <div id="feedback"></div>
+
+            <br>
+
+            <label for="location">Target location/area:</label>
+            <input type="text" id="Location" name="location">
+
+            <br>
+
+            <label for="keyword">Any relevant keyword:</label>
+            <input type="text" id="Keyword" name="keyword">
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <script>
+      
+      // Initialize map with dummy data
+      var initialOptions = {
+         center: [42.39326,-72.52504],
+         zoom: 16
+      }
+      var mapLocation = new L.map('map',initialOptions)
+
+      // Handle submit button is clicked
+      document.getElementById('myForm').addEventListener('submit', function(event) {
+         event.preventDefault();
+
+         const address = document.getElementById('Location').value;
+         const keyword = document.getElementById('Keyword').value;
+
+         var mapOptions = null;
+         var myLocation = null;
+         console.log(address)
+         fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + address).then(response => response.json()).then(data => 
+         {
+            myLocation = data[0];
+            console.log(myLocation)
+            if (myLocation !== undefined) {
+                mapLocation.panTo([myLocation.lat,myLocation.lon])
+                var layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+                mapLocation.addLayer(layer);
+            }
+            else {
+                const message = "Sorry, we could not find that location--please try rephrasing or simplifying your search"
+                document.getElementById('feedback').textContent = message;
+            }
+         })
+        });
+   //dummy stuff to the side try
+   //auto-fill try
+   //error message 
+   //flask for data stuff bw web app and python file
+      </script>
+
+      <style>
+      
+      </style>
+   </body>
+   
+</html>
